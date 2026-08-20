@@ -8,7 +8,7 @@ Flutter app for delivery riders to accept nearby orders, navigate pickup-to-deli
 
 | App | Description |
 |---|---|
-| [grocery_backend](../../../grocery-backend) | NestJS API powering the whole platform |
+| [grocery_backend](../../../grocery_backend) | NestJS API powering the whole platform |
 | [grocery_frontend_customer](../../../grocery_frontend_customer) | Customer shopping app |
 | [grocery_frontend_store](../../../grocery_frontend_store) | Store/partner management app |
 | [grocery_frontend_admin](../../../grocery_frontend_admin) | Admin console |
