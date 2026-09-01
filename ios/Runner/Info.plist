@@ -4,6 +4,8 @@
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to show delivery jobs near you and share your live position with the customer.</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>We need microphone access for calls with your customer.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

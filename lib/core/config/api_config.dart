@@ -23,7 +23,7 @@ class ApiConfig {
       case TargetPlatform.android:
         return 'http://10.0.2.2:$_port';
       default:
-        return 'http://192.168.0.100:$_port';
+        return 'http://192.168.0.103:$_port';
     }
   }
 

@@ -162,6 +162,34 @@ class _Controls extends StatelessWidget {
         ],
       );
     }
+    if (accepted) {
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _ToggleButton(
+                icon: Icons.mic_off_rounded,
+                label: 'Mute',
+                onToggle: (muted) => cubit.toggleMute(muted),
+              ),
+              _ToggleButton(
+                icon: Icons.volume_up_rounded,
+                label: 'Speaker',
+                onToggle: (on) => cubit.toggleSpeaker(on),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          _CallButton(
+            icon: Icons.call_end_rounded,
+            color: AppColors.error,
+            label: 'End call',
+            onTap: () => cubit.end(),
+          ),
+        ],
+      );
+    }
     return Column(
       children: [
         _CallButton(
@@ -175,6 +203,62 @@ class _Controls extends StatelessWidget {
   }
 }
 
+class _ToggleButton extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final void Function(bool active) onToggle;
+  const _ToggleButton({
+    required this.icon,
+    required this.label,
+    required this.onToggle,
+  });
+
+  @override
+  State<_ToggleButton> createState() => _ToggleButtonState();
+}
+
+class _ToggleButtonState extends State<_ToggleButton> {
+  bool _active = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: () {
+            setState(() => _active = !_active);
+            widget.onToggle(_active);
+          },
+          customBorder: const CircleBorder(),
+          child: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: _active
+                  ? AppColors.white
+                  : AppColors.white.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              widget.icon,
+              color: _active ? AppColors.primaryDark : AppColors.white,
+              size: 24,
+            ),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          widget.label,
+          style: TextStyle(
+            color: AppColors.white.withValues(alpha: 0.85),
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+}
 class _CallButton extends StatelessWidget {
   final IconData icon;
   final Color color;

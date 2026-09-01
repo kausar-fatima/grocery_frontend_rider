@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../core/network/api_exception.dart';
 import '../../core/network/dio_client.dart';
@@ -30,6 +31,23 @@ class NotificationsApi {
       return data['unread'] is int
           ? data['unread']
           : int.tryParse('${data['unread']}') ?? 0;
+    } on DioException catch (e) {
+      throw ApiException.fromDio(e);
+    }
+  }
+
+  Future<void> registerDeviceToken(String token) async {
+    try {
+      final res = await _client.dio.post(
+        '/notifications/device-token',
+        data: {
+          'token': token,
+          'platform': defaultTargetPlatform == TargetPlatform.iOS
+              ? 'ios'
+              : 'android',
+        },
+      );
+      ensureOk(res);
     } on DioException catch (e) {
       throw ApiException.fromDio(e);
     }

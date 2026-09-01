@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:grocery_frontend_rider/core/calls/call_audio_service.dart';
+import 'package:grocery_frontend_rider/core/notifications/push_notification_service.dart';
+import 'package:firebase_core/firebase_core.dart'; 
 
 import 'core/location/location_service.dart';
 import 'core/network/dio_client.dart';
@@ -20,9 +23,10 @@ import 'routes/app_router.dart';
 import 'routes/app_routes.dart';
 import 'core/config/api_config.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  ApiConfig.overrideBaseUrl = 'http://192.168.0.100:3000';
+  await Firebase.initializeApp();
+  ApiConfig.overrideBaseUrl = 'http://192.168.0.103:3000';
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -38,8 +42,11 @@ void main() {
 
   final auth = AuthCubit(AuthApi(dio), tokenStorage);
   final delivery = DeliveryCubit(DeliveryApi(dio), LocationService());
-  final calls = CallsCubit(callsApi);
-  final notifications = NotificationsCubit(NotificationsApi(dio));
+  final calls = CallsCubit(callsApi, CallAudioService());
+  final notifications = NotificationsCubit(
+    NotificationsApi(dio),
+    PushNotificationService(),
+  );
 
   runApp(RiderApp(
     auth: auth,
@@ -88,7 +95,14 @@ class RiderApp extends StatelessWidget {
                   delivery.loadAvailable();
                   delivery.loadMine();
                   calls.attach(state.user!.id);
-                  notifications.attach();
+                  notifications.attach(
+                    onCallData: (data) {
+                      final callId = int.tryParse(
+                        data['callId']?.toString() ?? '',
+                      );
+                      if (callId != null) calls.fetchAndSetActive(callId);
+                    },
+                  );
                 } else if (state.status == AuthStatus.unauthenticated) {
                   calls.detach();
                   notifications.detach();
