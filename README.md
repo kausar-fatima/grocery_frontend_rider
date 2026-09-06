@@ -80,11 +80,12 @@ New rider accounts require admin approval before they can sign in — approve pe
 
 ```
 lib/
-├── core/            # network, theme, location services
-├── data/            # API clients, models
-├── logic/           # Cubits (state management)
-├── presentation/       # screens and widgets
-└── routes/           # go_router configuration
+├── core/ # network, theme, location services, notifications (FCM),
+│ # calls (Agora audio)
+├── data/ # API clients, models
+├── logic/ # Cubits (state management)
+├── presentation/ # screens and widgets
+└── routes/ # go_router configuration
 ```
 
 ## License
