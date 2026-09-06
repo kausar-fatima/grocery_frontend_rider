@@ -26,7 +26,7 @@ import 'core/config/api_config.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  ApiConfig.overrideBaseUrl = 'http://192.168.0.103:3000';
+  ApiConfig.overrideBaseUrl = 'http://192.168.0.101:3000';
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -96,11 +96,28 @@ class RiderApp extends StatelessWidget {
                   delivery.loadMine();
                   calls.attach(state.user!.id);
                   notifications.attach(
-                    onCallData: (data) {
-                      final callId = int.tryParse(
-                        data['callId']?.toString() ?? '',
-                      );
-                      if (callId != null) calls.fetchAndSetActive(callId);
+                    onPushTap: (data) {
+                      switch (data['type']) {
+                        case 'incoming_call':
+                          final callId = int.tryParse(
+                            data['callId']?.toString() ?? '',
+                          );
+                          if (callId != null) calls.fetchAndSetActive(callId);
+                          break;
+                        case 'chat':
+                          final orderId = int.tryParse(
+                            data['orderId']?.toString() ?? '',
+                          );
+                          final name = data['senderName']?.toString() ?? 'Chat';
+                          if (orderId != null) {
+                            appRouter.router.push(
+                              '${AppRoutes.chat}/$orderId?name=${Uri.encodeComponent(name)}',
+                            );
+                          }
+                          break;
+                        default:
+                          notifications.load();
+                      }
                     },
                   );
                 } else if (state.status == AuthStatus.unauthenticated) {

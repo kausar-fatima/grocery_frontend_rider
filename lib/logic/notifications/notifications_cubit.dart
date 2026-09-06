@@ -49,7 +49,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
   /// — wire this to CallsCubit so an incoming push can trigger the same flow
   /// as the existing poll-based discovery.
   Future<void> attach({
-    required void Function(Map<String, dynamic>) onCallData,
+    required void Function(Map<String, dynamic>) onPushTap,
   }) async {
     _refreshUnread();
     _poll?.cancel();
@@ -61,11 +61,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     await _push.init(
       onToken: (token) => _api.registerDeviceToken(token).catchError((_) {}),
       onTap: (data) {
-        if (data['type'] == 'incoming_call') {
-          onCallData(data);
-        } else {
-          load();
-        }
+        onPushTap(data);
       },
     );
   }
